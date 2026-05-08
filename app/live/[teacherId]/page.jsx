@@ -9,7 +9,7 @@ export default function TeacherLivePage({ params }) {
   const resolvedParams = use(params);
   const teacherId = resolvedParams?.teacherId;
 
-  const { data } = useContent();  
+  const { data = [] } = useContent();  
 
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
