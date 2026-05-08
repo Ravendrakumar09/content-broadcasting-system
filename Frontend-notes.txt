@@ -1,0 +1,37 @@
+Project structure:
+- App Router based structure under app/ with route groups for auth and dashboards.
+- Shared components in app/components (forms, dashboard, ui, layout).
+- Service layer in app/services to isolate API logic from components.
+- Shared logic in app/hooks, app/utils, and app/validations.
+
+Authentication flow:
+- Login page calls auth.service to validate credentials via /users API.
+- On success, token/role/userId are stored in cookies + localStorage via storage util.
+- Middleware protects dashboard routes and handles role-based redirects.
+- AuthContext exposes session state and logout functionality to the UI.
+
+Role-based routing:
+- Teacher routes: /teacher/dashboard, /teacher/upload, /teacher/my-content
+- Principal routes: /principal/dashboard, /principal/approval, /principal/all-content
+- Public route: /live/:teacherId (no authentication required)
+- Middleware enforces route ownership using role cookie.
+
+API integration approach:
+- app/services/api.js provides a reusable axios instance with auth header injection.
+- app/services/auth.service.js: login flow.
+- app/services/content.service.js: teacher/all content fetch, create content, active live content filter.
+- app/services/approval.service.js: approve/reject status updates.
+- Components do not call axios directly.
+
+State management approach:
+- React local state + custom hooks for page-specific data flows.
+- useContent/useAllContent encapsulate async loading/error/data/refetch patterns.
+- AuthContext manages shared authentication session state.
+- useMemo used where useful to avoid unnecessary recalculations on filtered/stat data.
+
+Assumptions:
+- Backend is simulated using json-server and db.json.
+- Token is mock-only (fake token), but API layer is replaceable for real backend integration.
+- File payload is stored as base64 data URL for preview in mock API.
+- Scheduling status is frontend-derived from start/end timestamps.
+- Polling interval for live page is 30 seconds.

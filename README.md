@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Content Broadcasting System (Frontend)
 
-## Getting Started
+A role-based frontend for educational content broadcasting built with Next.js + Tailwind CSS.
 
-First, run the development server:
+## Features
+
+- Authentication with role-based redirects (Teacher / Principal)
+- Protected route handling with middleware + client auth checks
+- Teacher workflows:
+  - Dashboard with status cards
+  - Upload content with file validation and preview
+  - My Content table with schedule + approval status
+- Principal workflows:
+  - Dashboard with global stats
+  - Pending approval page with approve/reject actions
+  - Mandatory rejection reason modal
+  - All content page with search + status filters
+- Public live page:
+  - Route: `/live/:teacherId`
+  - Shows currently active approved content
+  - Loading, empty, and error states
+  - Auto-refresh polling (30s)
+- Dedicated service layer for API calls (`app/services/*`)
+
+## Tech Stack
+
+- Next.js (App Router)
+- React
+- Tailwind CSS
+- Axios
+- json-server (mock backend)
+
+## Folder Structure (Key)
+
+- `app/components` reusable UI, forms, and dashboards
+- `app/services` API integration layer
+- `app/hooks` reusable data/auth hooks
+- `app/context` auth context
+- `app/utils` formatting, storage, file validation helpers
+- `app/validations` form validation logic
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start mock API server:
+
+```bash
+npm run api
+```
+
+3. In another terminal, start frontend:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Frontend: `http://localhost:3000`
+- Mock API: `http://127.0.0.1:5500`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## API Connection Notes
 
-## Learn More
+- Frontend requests default to `http://127.0.0.1:5500` (direct to mock API).
+- Optional overrides:
+  - Set `NEXT_PUBLIC_API_BASE_URL` to any API base URL.
+  - Set `API_SERVER_URL` for server-side/default fallback.
+  - Example: `NEXT_PUBLIC_API_BASE_URL=http://192.168.1.20:5500 npm run dev`
 
-To learn more about Next.js, take a look at the following resources:
+## Demo Credentials
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Teacher: `teacher@test.com` / `123456`
+- Principal: `principal@test.com` / `123456`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Build & Checks
 
-## Deploy on Vercel
+- Lint:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run lint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Production build (webpack mode for restricted environments):
+
+```bash
+npx next build --webpack
+```
+
+## Notes
+
+- File upload accepts only JPG/PNG/GIF, max 10MB.
+- Uploaded files are stored as data URLs in `db.json` (mock flow).
+- Scheduling status labels are UI-driven: Scheduled / Active / Expired.
